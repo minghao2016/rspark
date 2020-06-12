@@ -1,4 +1,9 @@
-FROM rocker/verse:3.6.1
+FROM rocker/verse:3.6.3-ubuntu18.04
+# Updated to rocker: R-3.6.3 Ubuntu-18.04
+# Note: problems from keys (.asc) may have to do with switching from xenial to bionic.
+# Possible fix: get new keys!
+# FROM rocker/verse:3.6.1
+
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG pgversion=11
@@ -7,7 +12,7 @@ ARG hiveversion=2.1.1
 ARG sparkversion=2.4.4
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
-ENV JAVA_HOME /usr/lib/jvm/default-java
+#ENV JAVA_HOME /usr/lib/jvm/default-java
 
 COPY postgresKey.asc openjdkKey.asc /tmp/
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common
@@ -19,6 +24,13 @@ RUN add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ stret
 # Update machine and install 
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev adoptopenjdk-8-hotspot && apt-get clean && update-java-alternatives -s adoptopenjdk-8-hotspot-amd64
+ENV JAVA_HOME /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+# Switch to rstudio CRAN mirror (untested)
+# RUN R CMD options(repos = c(CRAN = "https://cran.rstudio.com"))
+# Set environment variable for rJava package installation
+ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
+# Update environmental variables.  R needs to know these changed in its configuration for it to affect package installation.
+RUN R CMD javareconf
 
 ####################
 # HADOOP
