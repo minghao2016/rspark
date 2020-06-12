@@ -17,10 +17,10 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 COPY postgresKey.asc openjdkKey.asc /tmp/
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tzdata
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+	apt-key add /tmp/openjdkKey.asc && \
     add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
-	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
+	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 	# apt-key add /tmp/postgresKey.asc && \
-	apt-key add /tmp/openjdkKey.asc 
 
 # Update machine and install 
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
