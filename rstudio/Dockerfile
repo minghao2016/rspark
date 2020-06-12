@@ -24,8 +24,10 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 
 # Update machine and install 
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+RUN apt-get autoremove -y default-jdk
 RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev adoptopenjdk-8-hotspot && apt-get clean && update-java-alternatives -s adoptopenjdk-8-hotspot-amd64
 ENV JAVA_HOME /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+RUN JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
 # Switch to rstudio CRAN mirror (untested)
 # RUN R CMD options(repos = c(CRAN = "https://cran.rstudio.com"))
 # Set environment variable for rJava package installation
@@ -44,6 +46,8 @@ RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/core/hadoop-${
 	(cd /opt/hadoop; ln -s share/hadoop/tools/lib/hadoop-streaming-${hadoopversion}.jar hadoop-streaming.jar) && \
 	chown -R rstudio:rstudio /opt/hadoop
 ENV HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+RUN HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+
 
 ####################
 # HIVE
