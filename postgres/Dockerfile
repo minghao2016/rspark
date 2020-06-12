@@ -14,7 +14,7 @@ ENV PGVERSION ${pgversion}
 COPY postgresKey.asc /tmp/
 
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates \
-	wget dirmngr gnupg software-properties-common && \
+	wget dirmngr gnupg software-properties-common tzdata && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
 	add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
 	# apt-key add /tmp/postgresKey.asc && apt-get update
