@@ -1,8 +1,8 @@
 #! /bin/sh
 NO_EXIT=1
-while  [ ${NO_EXIT} == 1 ]
+while  [ ${NO_EXIT} = 1 ]
 do
-  echo "\n"
+  echo $'\n'
 
   PS3='Docker Image Manager: '
   options=("Stop Containers" "Delete Containers" "Delete Orphan Images" "Delete All Images" "Delete Hanging Volumes" "Quit")
