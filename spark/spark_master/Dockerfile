@@ -41,7 +41,7 @@ RUN apt-get update && \
 #	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
 #	apt-get update && \
 #	apt-get install -y adoptopenjdk-8-hotspot && \
-    update-java-alternatives -s /usr/lib/jvm/java-8-openjdk-amd64 && \
+    update-java-alternatives -s /usr/lib/jvm/java-1.8.0-openjdk-amd64 && \
 	apt-get clean
 
 #ARG JAVA_MAJOR_VERSION=8
@@ -57,7 +57,7 @@ RUN apt-get update && \
 #  | tar x -C /usr/ \
 #  && ln -s $JAVA_HOME /usr/java \
 #  && rm -rf $JAVA_HOME/man
-ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 ####################
 # HADOOP
 ####################

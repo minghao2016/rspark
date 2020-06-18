@@ -8,7 +8,7 @@ RUN apt-get update && \
 	apt-get install -y wget openjdk-8-jdk libpostgresql-jdbc-java postgresql-client && \
 	update-java-alternatives -s /usr/lib/jvm/java-1.8.0-openjdk-amd64 && \
 	apt-get clean
-
+ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/common/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \
 	tar zxf hadoop-${hadoopversion}.tar.gz && \
 	ln -s hadoop-${hadoopversion} hadoop && \
@@ -34,7 +34,7 @@ COPY waitfor.sh /scripts/
 RUN chmod 777 /scripts/waitfor.sh
 
 RUN echo "export CLASSPATH=/opt/hive/jdbc/hive-jdbc-${hiveversion}-standalone.jar" >> /.bashrc && \
-	echo "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64" >> /.bashrc && \
+	echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64" >> /.bashrc && \
 	echo "export PATH=/opt/hive/bin:/opt/hadoop/bin:$PATH" >> /.bashrc
 
 
