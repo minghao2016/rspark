@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:bionic
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG hadoopversion=2.9.2
@@ -36,11 +36,12 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 
 # JAVA
 RUN apt-get update && \
-	apt-get install -y  apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common && \
-	wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
-	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
-	apt-get update && \
-	apt-get install -y adoptopenjdk-8-hotspot && \
+	apt-get install -y  apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common openjdk-8-jdk && \
+#	wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
+#	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
+#	apt-get update && \
+#	apt-get install -y adoptopenjdk-8-hotspot && \
+    update-java-alternatives -s /usr/lib/jvm/java-8-openjdk-amd64 && \
 	apt-get clean
 
 #ARG JAVA_MAJOR_VERSION=8
@@ -56,7 +57,7 @@ RUN apt-get update && \
 #  | tar x -C /usr/ \
 #  && ln -s $JAVA_HOME /usr/java \
 #  && rm -rf $JAVA_HOME/man
-
+ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 ####################
 # HADOOP
 ####################
@@ -87,7 +88,7 @@ RUN curl -sL --retry 3 \
 ## Use Debian unstable via pinning -- new style via APT::Default-Release
 RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
     && echo 'APT::Default-Release "testing";' > /etc/apt/apt.conf.d/default
-ENV R_BASE_VERSION 3.6.2
+ENV R_BASE_VERSION 3.6.3
 
 ## Now install R and littler, and create a link for littler in /usr/local/bin
 ## Also set a default CRAN repo, and make sure littler knows about it too

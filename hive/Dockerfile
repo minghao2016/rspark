@@ -1,11 +1,12 @@
-FROM library/ubuntu:xenial
+FROM library/ubuntu:bionic
 MAINTAINER Mark Lilback <mark@lilback.com>
 
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
 
 RUN apt-get update && \
-	apt-get install -y wget default-jre libpostgresql-jdbc-java postgresql-client && \
+	apt-get install -y wget openjdk-8-jdk libpostgresql-jdbc-java postgresql-client && \
+	update-java-alternatives -s /usr/lib/jvm/java-1.8.0-openjdk-amd64 && \
 	apt-get clean
 
 RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/common/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \

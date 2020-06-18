@@ -14,20 +14,24 @@ ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
 #ENV JAVA_HOME /usr/lib/jvm/default-java
 
-COPY postgresKey.asc openjdkKey.asc /tmp/
+# COPY postgresKey.asc openjdkKey.asc /tmp/
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tzdata
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
-	apt-key add /tmp/openjdkKey.asc && \
-    add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
-	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+#	apt-key add /tmp/openjdkKey.asc && \
+    add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main'
+#    wget --quiet -O - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
+#    add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+#    curl https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/dists/bionic/Release
+	# add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 	# apt-key add /tmp/postgresKey.asc && \
 
 # Update machine and install 
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-RUN apt-get autoremove -y default-jdk
-RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev adoptopenjdk-8-hotspot && apt-get clean && update-java-alternatives -s adoptopenjdk-8-hotspot-amd64
-ENV JAVA_HOME /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
-RUN JAVA_HOME=/usr/lib/jvm/adoptopenjdk-8-hotspot-amd64
+#RUN apt-get autoremove -y default-jdk
+RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-1.8.0-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+RUN apt-get install -y scala
 # Switch to rstudio CRAN mirror (untested)
 # RUN R CMD options(repos = c(CRAN = "https://cran.rstudio.com"))
 # Set environment variable for rJava package installation
