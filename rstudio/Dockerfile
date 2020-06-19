@@ -7,9 +7,9 @@ FROM rocker/verse:3.6.3-ubuntu18.04
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG pgversion=11
-ARG hadoopversion=2.9.2
-ARG hiveversion=2.1.1
-ARG sparkversion=2.4.4
+#ARG hadoopversion=2.9.2
+#ARG hiveversion=2.1.1
+#ARG sparkversion=2.4.4
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
 #ENV JAVA_HOME /usr/lib/jvm/default-java
@@ -39,40 +39,40 @@ ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
 # Update environmental variables.  R needs to know these changed in its configuration for it to affect package installation.
 RUN R CMD javareconf
 
-####################
-# HADOOP
-####################
-# Download and Install Hadoop and set Hadoop environment variable
-RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/core/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \
-	tar zxf hadoop-${hadoopversion}.tar.gz && \
-	ln -s hadoop-${hadoopversion} hadoop && \
-	rm hadoop-${hadoopversion}.tar.gz && \
-	(cd /opt/hadoop; ln -s share/hadoop/tools/lib/hadoop-streaming-${hadoopversion}.jar hadoop-streaming.jar) && \
-	chown -R rstudio:rstudio /opt/hadoop
-ENV HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
-RUN HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
-
-
-####################
-# HIVE
-####################
-RUN cd /opt && \
-	wget --quiet http://archive.apache.org/dist/hive/hive-${hiveversion}/apache-hive-${hiveversion}-bin.tar.gz && \
-	tar zxf apache-hive-${hiveversion}-bin.tar.gz && \
-	ln -s apache-hive-${hiveversion}-bin hive && \
-	ln -s /opt/hive/jdbc/hive-jdbc-${hiveversion}-standalone.jar /opt/hive/lib/ && \
-	rm apache-hive-${hiveversion}-bin.tar.gz
+#####################
+## HADOOP
+#####################
+## Download and Install Hadoop and set Hadoop environment variable
+#RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/core/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \
+#	tar zxf hadoop-${hadoopversion}.tar.gz && \
+#	ln -s hadoop-${hadoopversion} hadoop && \
+#	rm hadoop-${hadoopversion}.tar.gz && \
+#	(cd /opt/hadoop; ln -s share/hadoop/tools/lib/hadoop-streaming-${hadoopversion}.jar hadoop-streaming.jar) && \
+#	chown -R rstudio:rstudio /opt/hadoop
+#ENV HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+#RUN HADOOP_CMD=/opt/hadoop/bin/hadoop HADOOP_HOME=/opt/hadoop HADOOP_BIN=/opt/hadoop/bin HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
+#
+#
+#####################
+## HIVE
+#####################
+#RUN cd /opt && \
+#	wget --quiet http://archive.apache.org/dist/hive/hive-${hiveversion}/apache-hive-${hiveversion}-bin.tar.gz && \
+#	tar zxf apache-hive-${hiveversion}-bin.tar.gz && \
+#	ln -s apache-hive-${hiveversion}-bin hive && \
+#	ln -s /opt/hive/jdbc/hive-jdbc-${hiveversion}-standalone.jar /opt/hive/lib/ && \
+#	rm apache-hive-${hiveversion}-bin.tar.gz
 
 ####################
 # SPARK
 ####################
 # Install Spark
-RUN cd /opt && \
-	wget --quiet http://archive.apache.org/dist/spark/spark-${sparkversion}/spark-${sparkversion}-bin-hadoop2.7.tgz && \
-	tar zxf spark-${sparkversion}-bin-hadoop2.7.tgz && \
-	mv spark-${sparkversion}-bin-hadoop2.7 spark && \
-	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
-	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-42.2.2.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh
+#RUN cd /opt && \
+#	wget --quiet http://archive.apache.org/dist/spark/spark-${sparkversion}/spark-${sparkversion}-bin-hadoop2.7.tgz && \
+#	tar zxf spark-${sparkversion}-bin-hadoop2.7.tgz && \
+#	mv spark-${sparkversion}-bin-hadoop2.7 spark && \
+#	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
+#	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-42.2.2.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh
 
 ####################
 # R PACKAGES
@@ -85,13 +85,13 @@ ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
 RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"functional\", \"R.methodsS3\", \"caTools\", \"trelliscopejs\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"Lahman\", \"nycflights13\", \"flexdashboard\", \"sparklyr\", \"glmnet\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
 # Removed datadr and trelliscope since they are deprecated.  Install trelliscopejs instead.  Added caTools
 # Copy repository packages to filesystem
-ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
-# Install repository packages
-RUN cd /tmp/pkgs && R CMD INSTALL rmr2 rhdfs
-
-ADD protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
-RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-* && \
-	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
+#ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
+## Install repository packages
+#RUN cd /tmp/pkgs && R CMD INSTALL rmr2 rhdfs
+#
+#ADD protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
+#RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-* && \
+#	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
 
 ADD postgresql-42.2.2.jar /opt
 
@@ -99,13 +99,13 @@ ADD postgresql-42.2.2.jar /opt
 # ENVIRONMENT CONFIG
 ####################
 # Add necessary mods to Renviron file
-ADD Renviron /usr/local/lib/R/etc/
-ADD hdfs-site.xml core-site.xml log4j.properties /opt/hadoop/etc/hadoop/
+#ADD Renviron /usr/local/lib/R/etc/
+#ADD hdfs-site.xml core-site.xml log4j.properties /opt/hadoop/etc/hadoop/
 # Create symlink to actual Rscript
 RUN ln -s /usr/local/bin/Rscript /usr/bin/Rscript
 
 # Add path to profile so commands are found if attach to the container
-RUN echo "PATH='/opt/hadoop/bin:/opt/spark/bin:/opt/hive/bin:$PATH'" >> /etc/profile
+#RUN echo "PATH='/opt/hadoop/bin:/opt/spark/bin:/opt/hive/bin:$PATH'" >> /etc/profile
 
 # Install TensorFlow Package
 # RUN R -e "install.packages(\"tensorflow\")"
@@ -129,8 +129,8 @@ RUN chown -R rstudio:rstudio /home/rstudio
 
 # USER root
 EXPOSE 8787
-EXPOSE 4040
-EXPOSE 4041
+#EXPOSE 4040
+#EXPOSE 4041
 
 CMD ["/init"]
 
