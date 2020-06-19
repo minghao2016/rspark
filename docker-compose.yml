@@ -37,15 +37,16 @@ services:
       - PASSWORD=rstudiojh
     ports:
       - "8787:8787"     # RStudio UI
+      - "8080:8080"
       - "4040:4040"     # Spark Web UI
       - "4041:4041"
       #- "8881:8881"
       #- "8880:8880"
     volumes:
       - rspark_rstudio:/home/rstudio
-#    depends_on:
-#      - hadoop
-#      - hive
+    depends_on:
+      - hadoop
+      - hive
 
 volumes:
   rspark_hadoopdata:
