@@ -11,20 +11,16 @@ ENV PGDIR /usr/lib/postgresql/${pgversion}/bin/
 ENV PGVERSION ${pgversion}
 
 # Add the PostgreSQL PGP key to verify their Debian packages.
-COPY postgresKey.asc /tmp/
 
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates \
 	wget dirmngr gnupg software-properties-common tzdata && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
 	add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
-	# apt-key add /tmp/postgresKey.asc && apt-get update
-#	sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
     apt-get update
+
 # Install packages and Postgres
 RUN apt-get install -y postgresql-${pgversion} postgresql-client-${pgversion} postgresql-contrib-${pgversion} libpq-dev
-# removed python-software-properties from install:  no installation candidate
 RUN mkdir -p /opt/pg-data; chown -R postgres /opt/pg-data; chmod 700 /opt/pg-data
-
 RUN locale-gen en_US.UTF-8
 
 # Delete default cluster and create new cluster
