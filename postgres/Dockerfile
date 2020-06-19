@@ -2,7 +2,7 @@ FROM library/ubuntu:bionic
 MAINTAINER Mark Lilback <mark@lilback.com>
 
 # Define Postgres Versions
-ARG pgversion=9.6
+ARG pgversion=11
 # ARG pgversion=10
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
