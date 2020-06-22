@@ -6,7 +6,7 @@ FROM rocker/verse:3.6.3-ubuntu18.04
 
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
-ARG pgversion=11
+ARG pgversion=9.6
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
 ARG sparkversion=2.4.4
@@ -85,13 +85,14 @@ ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
 RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"functional\", \"R.methodsS3\", \"caTools\", \"trelliscopejs\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"Lahman\", \"nycflights13\", \"flexdashboard\", \"sparklyr\", \"glmnet\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
 # Removed datadr and trelliscope since they are deprecated.  Install trelliscopejs instead.  Added caTools
 # Copy repository packages to filesystem
-ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
+# ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
 # Install repository packages
-RUN cd /tmp/pkgs && R CMD INSTALL rmr2 rhdfs
+# RUN cd /tmp/pkgs && R CMD INSTALL rhdfs
 
-ADD protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
-RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-* && \
-	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
+ADD protobuf-2.5.0.tar.gz /tmp/
+RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && \
+	cd .. 	&& rm -rf protobuf-*
+# 	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
 
 ADD postgresql-42.2.2.jar /opt
 
