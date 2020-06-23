@@ -1,11 +1,10 @@
 FROM rocker/verse:3.6.3-ubuntu18.04
 # Updated to rocker: R-3.6.3 Ubuntu-18.04
 # Note: problems from keys (.asc) may have to do with switching from xenial to bionic.
-# Possible fix: get new keys!
-# FROM rocker/verse:3.6.1
 
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
+ARG javaversion=1.8.0
 ARG pgversion=9.6
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
@@ -27,10 +26,10 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 
 # Update machine and install 
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-#RUN apt-get autoremove -y default-jdk
-RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-1.8.0-openjdk-amd64
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
-RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+# RUN apt-get autoremove -y default-jdk
+RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-${javaversion}-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-${javaversion}-openjdk-amd64
+RUN JAVA_HOME=/usr/lib/jvm/java-${javaversion}-openjdk-amd64
 RUN apt-get install -y scala
 # Switch to rstudio CRAN mirror (untested)
 # RUN R CMD options(repos = c(CRAN = "https://cran.rstudio.com"))
@@ -82,17 +81,16 @@ RUN cd /opt && \
 # Set environment variable for rJava package installation
 ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
 # Install R packages
-RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"functional\", \"R.methodsS3\", \"caTools\", \"trelliscopejs\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"Lahman\", \"nycflights13\", \"flexdashboard\", \"sparklyr\", \"glmnet\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
-# Removed datadr and trelliscope since they are deprecated.  Install trelliscopejs instead.  Added caTools
+RUN Rscript -e "install.packages(c(\"rjson\", \"functional\", \"R.methodsS3\", \"caTools\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"gapminder\", \"tidymodels\", \"glmnet\", \"trelliscopejs\", \"flexdashboard\", \"sparklyr\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
+
 # Copy repository packages to filesystem
 # ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
 # Install repository packages
-# RUN cd /tmp/pkgs && R CMD INSTALL rhdfs
+# RUN cd /tmp/pkgs && R CMD INSTALL rhdfs rmr2
 
-ADD protobuf-2.5.0.tar.gz /tmp/
+ADD archive/protobuf-2.5.0.tar.gz /tmp/
 RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && \
 	cd .. 	&& rm -rf protobuf-*
-# 	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
 
 ADD postgresql-42.2.2.jar /opt
 
@@ -107,9 +105,6 @@ RUN ln -s /usr/local/bin/Rscript /usr/bin/Rscript
 
 # Add path to profile so commands are found if attach to the container
 RUN echo "PATH='/opt/hadoop/bin:/opt/spark/bin:/opt/hive/bin:$PATH'" >> /etc/profile
-
-# Install TensorFlow Package
-# RUN R -e "install.packages(\"tensorflow\")"
 
 # USER rstudio
 # Install rspark test files

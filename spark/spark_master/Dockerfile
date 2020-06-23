@@ -1,9 +1,10 @@
 FROM debian:bionic
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
+ARG javaversion=1.8.0
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
-ARG sparkversion=2.4.4
+ARG sparkversion=2.4.5
 
 RUN apt-get update \
  && apt-get install -y locales \
@@ -20,7 +21,7 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
-# Install Python 3
+# Python 3
 RUN apt-get update \
  && apt-get install -y curl unzip \
     python3 python3-setuptools \
@@ -37,30 +38,12 @@ ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 # JAVA
 RUN apt-get update && \
 	apt-get install -y  apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common openjdk-8-jdk && \
-#	wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
-#	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
-#	apt-get update && \
-#	apt-get install -y adoptopenjdk-8-hotspot && \
-    update-java-alternatives -s /usr/lib/jvm/java-1.8.0-openjdk-amd64 && \
+    update-java-alternatives -s /usr/lib/jvm/java-${javaversion}-openjdk-amd64 && \
 	apt-get clean
+	
+ENV JAVA_HOME=/usr/lib/jvm/java-${javaversion}-openjdk-amd64
 
-#ARG JAVA_MAJOR_VERSION=8
-#ARG JAVA_UPDATE_VERSION=131
-#ARG JAVA_BUILD_NUMBER=11
-#ENV JAVA_HOME /usr/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_UPDATE_VERSION}
-
-#ENV PATH $PATH:$JAVA_HOME/bin
-#RUN curl -sL --retry 3 --insecure \
-#  --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
-#  "http://download.oracle.com/otn-pub/java/jdk/${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}-b${JAVA_BUILD_NUMBER}/d54c1d3a095b4ff2b6607d096fa80163/server-jre-${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}-linux-x64.tar.gz" \
-#  | gunzip \
-#  | tar x -C /usr/ \
-#  && ln -s $JAVA_HOME /usr/java \
-#  && rm -rf $JAVA_HOME/man
-ENV JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
-####################
 # HADOOP
-####################
 ENV HADOOP_VERSION 2.9.2
 ENV HADOOP_HOME /usr/hadoop-$HADOOP_VERSION
 ENV HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
@@ -73,13 +56,13 @@ RUN curl -sL --retry 3 \
  && chown -R root:root $HADOOP_HOME
 
 # SPARK
-ENV SPARK_VERSION 2.4.4
+ENV SPARK_VERSION 2.4.5
 ENV SPARK_PACKAGE spark-${SPARK_VERSION}-bin-without-hadoop
 ENV SPARK_HOME /usr/spark-${SPARK_VERSION}
 ENV SPARK_DIST_CLASSPATH="$HADOOP_HOME/etc/hadoop/*:$HADOOP_HOME/share/hadoop/common/lib/*:$HADOOP_HOME/share/hadoop/common/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/hdfs/lib/*:$HADOOP_HOME/share/hadoop/hdfs/*:$HADOOP_HOME/share/hadoop/yarn/lib/*:$HADOOP_HOME/share/hadoop/yarn/*:$HADOOP_HOME/share/hadoop/mapreduce/lib/*:$HADOOP_HOME/share/hadoop/mapreduce/*:$HADOOP_HOME/share/hadoop/tools/lib/*"
 ENV PATH $PATH:${SPARK_HOME}/bin
 RUN curl -sL --retry 3 \
-  "https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz" \
+"https://www.apache.org/dyn/mirrors/mirrors.cgi?action=download&filename=spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz" \
   | gunzip \
   | tar x -C /usr/ \
  && mv /usr/$SPARK_PACKAGE $SPARK_HOME \
