@@ -5,13 +5,14 @@ FROM rocker/verse:3.6.3-ubuntu18.04
 MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG javaversion=1.8.0
+ARG jdbcversion=42.2.2
 ARG pgversion=9.6
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
-ARG sparkversion=2.4.4
+ARG sparkversion=2.4.6
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
-#ENV JAVA_HOME /usr/lib/jvm/default-java
+# ENV JAVA_HOME /usr/lib/jvm/default-java
 
 # COPY postgresKey.asc openjdkKey.asc /tmp/
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tzdata
@@ -21,10 +22,10 @@ RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-k
 #    wget --quiet -O - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
 #    add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
 #    curl https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/dists/bionic/Release
-	# add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
-	# apt-key add /tmp/postgresKey.asc && \
+# add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/
+# apt-key add /tmp/postgresKey.asc && \
 
-# Update machine and install 
+# Update machine and install
 # RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 # RUN apt-get autoremove -y default-jdk
 RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-${javaversion}-openjdk-amd64
@@ -65,13 +66,12 @@ RUN cd /opt && \
 ####################
 # SPARK
 ####################
-# Install Spark
 RUN cd /opt && \
 	wget --quiet http://archive.apache.org/dist/spark/spark-${sparkversion}/spark-${sparkversion}-bin-hadoop2.7.tgz && \
 	tar zxf spark-${sparkversion}-bin-hadoop2.7.tgz && \
 	mv spark-${sparkversion}-bin-hadoop2.7 spark && \
 	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
-	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-42.2.2.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh
+	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-${jdbcversion}.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh
 
 ####################
 # R PACKAGES
@@ -81,7 +81,7 @@ RUN cd /opt && \
 # Set environment variable for rJava package installation
 ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
 # Install R packages
-RUN Rscript -e "install.packages(c(\"rjson\", \"functional\", \"R.methodsS3\", \"caTools\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"gapminder\", \"tidymodels\", \"glmnet\", \"trelliscopejs\", \"flexdashboard\", \"sparklyr\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
+RUN Rscript -e "install.packages(c(\"rjson\", \"functional\", \"R.methodsS3\", \"caTools\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"gapminder\", \"glmnet\", \"trelliscopejs\", \"flexdashboard\", \"sparklyr\", \"reticulate\", \"tensorflow\"), repos = 'http://cran.rstudio.com')"
 
 # Copy repository packages to filesystem
 # ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
@@ -92,7 +92,7 @@ ADD archive/protobuf-2.5.0.tar.gz /tmp/
 RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && \
 	cd .. 	&& rm -rf protobuf-*
 
-ADD postgresql-42.2.2.jar /opt
+ADD postgresql-${jdbcversion}.jar /opt
 
 ####################
 # ENVIRONMENT CONFIG

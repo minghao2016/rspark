@@ -26,6 +26,8 @@ services:
     image: rspark-hive
     ports:
       - "10000:10000"
+    volumes:
+      - rspark_hivedata:/opt/hive
     depends_on:
       - hadoop
 
@@ -49,7 +51,9 @@ services:
       - hive
 
 volumes:
-  rspark_hadoopdata:
-  rspark_rstudio:
   rspark_pgdata:
+  rspark_hadoopdata:
+  rspark_hivedata:
+  rspark_rstudio:
   rspark_sparkdata:
+  
