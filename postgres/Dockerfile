@@ -13,7 +13,7 @@ ENV PGVERSION ${pgversion}
 # Add the PostgreSQL PGP key to verify their Debian packages.
 
 RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certificates \
-	wget dirmngr gnupg software-properties-common tzdata && \
+	wget dirmngr gnupg software-properties-common tzdata default-jdk && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
 	add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
     apt-get update

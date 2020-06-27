@@ -13,10 +13,13 @@ RUN apt-get update && apt-get install -y  apt-utils apt-transport-https ca-certi
 RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
     add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main'
 
-RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-1.8.0-openjdk-amd64
-ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
-RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
-RUN apt-get install -y scala
+RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev default-jdk && apt-get clean
+
+#RUN apt-get update && apt-get install --no-install-recommends -y postgresql-client-${pgversion} libicu-dev openjdk-8-jdk && apt-get clean && update-java-alternatives -s java-1.8.0-openjdk-amd64
+#ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk-amd64
+#RUN JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/default-java
+#RUN apt-get install -y scala
 # Switch to rstudio CRAN mirror (untested)
 # RUN R CMD options(repos = c(CRAN = "https://cran.rstudio.com"))
 # Set environment variable for rJava package installation
