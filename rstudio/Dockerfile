@@ -105,7 +105,7 @@ RUN ln -s /usr/local/bin/Rscript /usr/bin/Rscript
 
 # Add path to profile so commands are found if attach to the container
 RUN echo "PATH='/opt/hadoop/bin:/opt/spark/bin:/opt/hive/bin:$PATH'" >> /etc/profile
-
+ENV PATH="/opt/hadoop/bin:/opt/spark/bin:/opt/hive/bin:$PATH"
 # USER rstudio
 # Install rspark test files
 # ADD rspark-tests.tar.gz /home/rstudio
