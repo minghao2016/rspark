@@ -68,14 +68,17 @@ ENV PATH /usr/local/spark/bin:/usr/local/hive/bin:/usr/local/hadoop/bin/:/usr/li
 # Install R packages
 RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"functional\", \"caTools\", \"R.methodsS3\", \"trelliscopejs\", \"RPostgreSQL\", \"RJDBC\", \"housingData\", \"Lahman\", \"nycflights13\", \"flexdashboard\", \"sparklyr\", \"glmnet\", \"reticulate\", \"tensorflow\", \"rhbase\", \"plyrmr\"), repos = 'http://cran.rstudio.com')"
 # Copy repository packages to filesystem
-COPY rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
+# ADD rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
 # Install repository packages
-RUN cd /tmp/pkgs && \
-    R CMD INSTALL rmr rhdfs
+# RUN cd /tmp/pkgs
+# RUN R CMD INSTALL rmr rhdfs
 
-COPY protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
-RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-* && \
-	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
+# COPY protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
+COPY protobuf-2.5.0.tar.gz /tmp/
+
+# RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-*
+# && \
+# 	cd /tmp/Rhipe && R CMD INSTALL . && cd .. && rm -rf Rhipe
 
 # COPY postgresql-42.2.2.jar /opt
 
