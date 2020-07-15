@@ -130,35 +130,3 @@ EXPOSE 4040
 EXPOSE 4041
 
 CMD ["/init"]
-
-
-#####################
-## HADOOP
-#####################
-## Download and Install Hadoop and set Hadoop environment variable
-#RUN cd /opt && wget --quiet http://archive.apache.org/dist/hadoop/core/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \
-#	tar zxf hadoop-${hadoopversion}.tar.gz && \
-#	ln -s hadoop-${hadoopversion} hadoop && \
-#	rm hadoop-${hadoopversion}.tar.gz && \
-#
-#
-#####################
-## HIVE
-#####################
-#RUN cd /opt && \
-#	wget --quiet http://archive.apache.org/dist/hive/hive-${hiveversion}/apache-hive-${hiveversion}-bin.tar.gz && \
-#	tar zxf apache-hive-${hiveversion}-bin.tar.gz && \
-#	ln -s apache-hive-${hiveversion}-bin hive && \
-#	ln -s /opt/hive/jdbc/hive-jdbc-${hiveversion}-standalone.jar /opt/hive/lib/ && \
-#	rm apache-hive-${hiveversion}-bin.tar.gz
-#
-#####################
-## SPARK
-#####################
-## Install Spark
-#RUN cd /opt && \
-#	wget --quiet http://archive.apache.org/dist/spark/spark-${sparkversion}/spark-${sparkversion}-bin-hadoop2.7.tgz && \
-#	tar zxf spark-${sparkversion}-bin-hadoop2.7.tgz && \
-#	mv spark-${sparkversion}-bin-hadoop2.7 spark && \
-#	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
-#	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-42.2.2.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh
