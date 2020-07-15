@@ -10,19 +10,6 @@ ENV HADOOP_VERSION 2.9.2
 ENV HIVE_VERSION 2.1.1
 ENV SPARK_VERSION 2.4.4
 
-#ARG pgversion=11
-#ARG hadoopversion=2.9.2
-#ARG hiveversion=2.1.1
-#ARG sparkversion=2.4.4
-#ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-
-#ENV JAVA_HOME /usr/lib/jvm/default-java
-
-#COPY postgresKey.asc openjdkKey.asc /tmp/
-
-# Update machine and install
-# RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-
 RUN apt-get update && \
     apt-get install -y apt-utils apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common tzdata gpg \
                        curl openssh-client openssh-server openjdk-${JAVA_VERSION}-jdk && \
