@@ -84,7 +84,7 @@ RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"funct
 COPY rhdfs.tar.gz rmr.tar.gz /tmp/pkgs/
 # Install repository packages
 RUN cd /tmp/pkgs && \
-    R CMD INSTALL rmr2 rhdfs
+    R CMD INSTALL rmr rhdfs
 
 COPY protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
 RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-* && \
