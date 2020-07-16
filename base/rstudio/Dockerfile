@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y postgresql-client-${POSTGRES_VERSION} libpq-dev libpostgresql-jdbc-java && \
     update-java-alternatives -s /usr/lib/jvm/java-${JAVA_VERSION_NUMBER}-openjdk-amd64 && \
-    echo 'JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION_NUMBER}-openjdk-amd64' >> .bashrc && \
+    #echo 'JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION_NUMBER}-openjdk-amd64' >> .bashrc && \
     R CMD javareconf && \
     cd /usr/local && \
     wget --quiet http://archive.apache.org/dist/hadoop/core/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz && \
@@ -54,6 +54,8 @@ ENV HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
 ENV YARN_CONF_DIR $HADOOP_PREFIX/etc/hadoop
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 ENV LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
+ENV SPARK_HOME /usr/local/spark
+ENV HIVE_HOME /usr/local/hive
 ENV PATH /usr/local/spark/bin:/usr/local/hive/bin:/usr/local/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 
@@ -73,8 +75,8 @@ RUN Rscript -e "install.packages(c(\"rjson\", \"RJSONIO\", \"jsonlite\", \"funct
 # RUN cd /tmp/pkgs
 # RUN R CMD INSTALL rmr rhdfs
 
-# COPY protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
-COPY protobuf-2.5.0.tar.gz /tmp/
+ADD protobuf-2.5.0.tar.gz Rhipe_0.75.2_hadoop-2.tar.gz /tmp/
+ADD protobuf-2.5.0.tar.gz /tmp/
 
 # RUN cd /tmp/protobuf-2.5.0 && ./configure --prefix=/usr && make && make install && cd .. 	&& rm -rf protobuf-*
 # && \
@@ -87,7 +89,7 @@ COPY protobuf-2.5.0.tar.gz /tmp/
 ####################
 # Add necessary mods to Renviron file
 # ADD Renviron /usr/local/lib/R/etc/
-COPY hdfs-site.xml core-site.xml log4j.properties /usr/local/hadoop/etc/hadoop/
+ADD hdfs-site.xml core-site.xml log4j.properties /usr/local/hadoop/etc/hadoop/
 # Create symlink to actual Rscript
 RUN ln -s /usr/local/bin/Rscript /usr/bin/Rscript
 
