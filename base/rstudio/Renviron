@@ -52,24 +52,32 @@ R_LIBS_SITE=${R_LIBS_SITE-'/opt/spark/R/lib:/usr/local/lib/R/site-library:/usr/l
 ### mode: sh ***
 ### sh-indentation: 2 ***
 ### End: ***
-R_LIBS='/opt/spark/R/lib'
-JAVA_HOME=/usr/lib/jvm/default-java
-SPARK_HOME=/opt/spark
-HADOOP_CMD=/opt/hadoop/bin/hadoop
-HADOOP_BIN=/opt/hadoop/bin
-HADOOP_HOME=/opt/hadoop
-HADOOP_PREFIX=/opt/hadoop
-HADOOP_COMMON_HOME=/opt/hadoop
-HADOOP_LIBS=/opt/hadoop/etc/hadoop:/opt/hadoop-2.9.2/share/hadoop/common/lib/:/opt/hadoop-2.9.2/share/hadoop/common/:/opt/hadoop-2.9.2/share/hadoop/hdfs:/opt/hadoop-2.9.2/share/hadoop/hdfs/lib/:/opt/hadoop-2.9.2/share/hadoop/hdfs/:/opt/hadoop-2.9.2/share/hadoop/yarn/lib/:/opt/hadoop-2.9.2/share/hadoop/yarn/:/opt/hadoop-2.9.2/share/hadoop/mapreduce/lib/:/opt/hadoop-2.9.2/share/hadoop/mapreduce/:/opt/hadoop/contrib/capacity-scheduler/.jar
-HADOOP_HDFS_HOME=/opt/hadoop
-HADOOP_MAPRED_HOME=/opt/hadoop
-HADOOP_YARN_HOME=/opt/hadoop
-HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
-YARN_CONF_DIR=$HADOOP_PREFIX/etc/hadoop
+PATH=/usr/local/spark/bin:/usr/local/hive/bin:/usr/local/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+CLASSPATH='/usr/share/java/postgresql-42.2.12.jar:/usr/local/hive/jdbc/hive-jdbc-2.1.1-standalone.jar:/usr/local/hadoop/share/hadoop/common/hadoop-common-2.9.2.jar'
+
+HADOOP_CMD=/usr/local/hadoop/bin/hadoop
+HADOOP_HOME=/usr/local/hadoop
+HADOOP_BIN=/usr/local/hadoop/bin
+HADOOP_CONF_DIR=/usr/local/hadoop/etc/hadoop
+HADOOP_PREFIX /usr/local/hadoop
+HADOOP_COMMON_HOME /usr/local/hadoop
+HADOOP_LIBS=/usr/local/hadoop/etc/hadoop:/usr/local/hadoop-2.9.2/share/hadoop/common/lib/:/usr/local/hadoop-2.9.2/share/hadoop/common/:/usr/local/hadoop-2.9.2/share/hadoop/hdfs:/usr/local/hadoop-2.9.2/share/hadoop/hdfs/lib/:/usr/local/hadoop-2.9.2/share/hadoop/hdfs/:/usr/local/hadoop-2.9.2/share/hadoop/yarn/lib/:/usr/local/hadoop-2.9.2/share/hadoop/yarn/:/usr/local/hadoop-2.9.2/share/hadoop/mapreduce/lib/:/usr/local/hadoop-2.9.2/share/hadoop/mapreduce/:/usr/local/hadoop/contrib/capacity-scheduler/.jar
+HADOOP_HDFS_HOME /usr/local/hadoop
+HADOOP_MAPRED_HOME /usr/local/hadoop
+HADOOP_YARN_HOME /usr/local/hadoop
+HADOOP_CONF_DIR /usr/local/hadoop/etc/hadoop
+YARN_CONF_DIR $HADOOP_PREFIX/etc/hadoop
 HADOOP_USER_NAME=rstudio
-HADOOP_STREAMING=/opt/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.2.jar
-CLASSPATH='/opt/postgresql-42.2.2.jar:/opt/hive/jdbc/hive-jdbc-2.1.1-standalone.jar:/opt/hadoop/share/hadoop/common/hadoop-common-2.9.2.jar'
+HADOOP_STREAMING=/usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-2.9.2.jar
+JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+LD_LIBRARY_PATH $JAVA_HOME/jre/lib/amd64:$JAVA_HOME/jre/lib/amd64/server
+SPARK_HOME /usr/local/spark
+HIVE_HOME /usr/local/hive
+PATH /usr/local/spark/bin:/usr/local/hive/bin:/usr/local/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+R_LIBS='/opt/spark/R/lib'
 
-PATH=/opt/hive/bin:/opt/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#CLASSPATH='/usr/share/java/postgresql-42.2.12.jar:/usr/local/hive/jdbc/hive-jdbc-2.1.1-standalone.jar:/usr/local/hadoop/share/hadoop/common/hadoop-common-2.9.2.jar'
 
-Sys.setenv(PATH="/opt/hive/bin:/opt/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
+# PATH=/opt/hive/bin:/opt/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#Sys.setenv(PATH="/opt/hive/bin:/opt/hadoop/bin/:/usr/lib/rstudio-server/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin")
