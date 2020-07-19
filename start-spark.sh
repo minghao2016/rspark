@@ -16,4 +16,6 @@ esac
 shift
 done
 
-docker-compose -f docker-compose.yml -f spark-compose.yml up -d
+docker-compose -f spark-compose.yml up -d
+
+# docker-compose -f docker-compose.yml -f spark-compose.yml up -d

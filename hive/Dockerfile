@@ -1,5 +1,6 @@
 FROM library/ubuntu:bionic
-MAINTAINER Mark Lilback <mark@lilback.com>
+
+MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1

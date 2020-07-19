@@ -13,21 +13,21 @@ services:
   hadoop:
     build: ./hadoop
     restart: always
-    image: rspark-hadoop
+    image: rhadoop-hadoop
     ports:
       - "9000:9000"     # Hadoop
       - "50070:50070"   # Hadoop UI
     volumes:
-      - rspark_hadoopdata:/opt/hadoop
+      - rhadoop_hadoopdata:/opt/hadoop
 
   hive:
     build: ./hive
     restart: always
-    image: rspark-hive
+    image: rhadoop-hive
     ports:
       - "10000:10000"
     volumes:
-      - rspark_hivedata:/opt/hive
+      - rhadoop_hivedata:/opt/hive
     depends_on:
       - hadoop
 
@@ -52,8 +52,8 @@ services:
 
 volumes:
   rspark_pgdata:
-  rspark_hadoopdata:
-  rspark_hivedata:
+  rhadoop_hadoopdata:
+  rhadoop_hivedata:
   rspark_rstudio:
   rspark_sparkdata:
   

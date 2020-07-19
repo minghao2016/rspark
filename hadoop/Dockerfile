@@ -1,5 +1,7 @@
 FROM ubuntu:bionic
 
+MAINTAINER Jim Harner <ejharner@gmail.com>
+
 ARG hadoopversion=2.9.2
 
 RUN apt-get update && apt-get install -y wget curl openjdk-8-jdk openssh-client openssh-server postgresql-client libpostgresql-jdbc-java vim && \
