@@ -4,7 +4,7 @@ MAINTAINER Jim Harner <ejharner@gmail.com>
 ARG pgversion=9.6
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
-ARG sparkversion=2.4.4
+ARG sparkversion=2.4.6
 ARG javaversion=8
 ARG javaversion_number=1.${javaversion}.0
 ARG APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1

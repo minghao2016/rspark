@@ -35,6 +35,7 @@ RUN apt-get update && \
 	mkdir /opt/hive-data && \
     mkdir /scripts && \
     chown -R root:root /opt/hive-data && \
+    chmod 700 /opt/hive-data && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

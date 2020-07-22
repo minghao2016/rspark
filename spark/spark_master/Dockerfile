@@ -23,7 +23,7 @@ ENV PATH ${HADOOP_HOME}/bin:${PATH}
 ENV HADOOP_CMD ${HADOOP_HOME}/bin/hadoop
 ENV HADOOP_BIN ${HADOOP_HOME}/bin
 
-ENV SPARK_VERSION 2.4.4
+ENV SPARK_VERSION 2.4.6
 ENV SPARK_PACKAGE spark-${SPARK_VERSION}-bin-without-hadoop
 ENV SPARK_HOME /opt/spark
 ENV SPARK_DIST_CLASSPATH "${HADOOP_HOME}/etc/hadoop/*:${HADOOP_HOME}/share/hadoop/common/lib/*:${HADOOP_HOME}/share/hadoop/common/*:${HADOOP_HOME}/share/hadoop/hdfs/*:${HADOOP_HOME}/share/hadoop/hdfs/lib/*:${HADOOP_HOME}/share/hadoop/hdfs/*:${HADOOP_HOME}/share/hadoop/yarn/lib/*:${HADOOP_HOME}/share/hadoop/yarn/*:${HADOOP_HOME}/share/hadoop/mapreduce/lib/*:${HADOOP_HOME}/share/hadoop/mapreduce/*:${HADOOP_HOME}/share/hadoop/tools/lib/*"
@@ -63,7 +63,7 @@ RUN apt-get update && \
     rm -rf $HADOOP_HOME/share/doc && \
     chown -R root:root $HADOOP_HOME && \
 # SPARK
-    wget --quiet http://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/&& \
+    wget --quiet http://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz && \
     tar zxf ${SPARK_PACKAGE}.tgz && \
     ln -s ${SPARK_PACKAGE} spark && \
 	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
@@ -71,7 +71,9 @@ RUN apt-get update && \
     rm ${SPARK_PACKAGE}.tgz && \
     mkdir /opt/spark-data && \
     chown -R root:root /opt/spark-data && \
+    chmod 700 /opt/spark-data && \
     chown -R root:root $SPARK_HOME && \
+    chmod 700 ${SPARK_HOME}
 # R
     cd / && \
 ###     apt-get install -y --no-install-recommends littler r-cran-littler r-base-${R_BASE_VERSION} r-base-dev-${R_BASE_VERSION} r-recommended=${R_BASE_VERSION} && \
@@ -87,14 +89,15 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-VOLUME ["/opt/spark-data"]
 WORKDIR $SPARK_HOME
+
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master"]
 
 EXPOSE 7077
 EXPOSE 8080
 EXPOSE 8081
 EXPOSE 4040
+EXPOSE 4041
 
 #
 #RUN apt-get update && \
