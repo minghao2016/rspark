@@ -6,95 +6,74 @@ ARG hiveversion=2.1.1
 ARG sparkversion=2.4.4
 ARG javaversion=8
 ARG javaversion_number=1.${javaversion}.0
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
-    apt-get install -y locales && \
-    dpkg-reconfigure -f noninteractive locales && \
-    locale-gen en_US.UTF-8 && \
-    /usr/sbin/update-locale LANG=en_US.UTF-8 && \
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-# Users with other locales should set this in their derivative image
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
-# Install Python 3
-RUN apt-get update && \
-    apt-get install -y curl unzip python3 python3-setuptools python3-pip && \
-    ln -s /usr/bin/python3 /usr/bin/python && \
-    python -m pip install py4j && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 # http://blog.stuart.axelbrooke.com/python-3-on-spark-return-of-the-pythonhashseed
 ENV PYTHONHASHSEED 0
 ENV PYTHONIOENCODING UTF-8
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
-# JAVA
-RUN apt-get update && \
-	apt-get install -y  apt-transport-https ca-certificates wget dirmngr gnupg software-properties-common && \
-	wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
-	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
-	apt-get update && \
-	apt-get install -y adoptopenjdk-8-hotspot && \
-	update-java-alternatives -s /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64 && \
-	apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-#ARG JAVA_MAJOR_VERSION=8
-#ARG JAVA_UPDATE_VERSION=131
-#ARG JAVA_BUILD_NUMBER=11
-#ENV JAVA_HOME /usr/jdk1.${JAVA_MAJOR_VERSION}.0_${JAVA_UPDATE_VERSION}
 
-#ENV PATH $PATH:$JAVA_HOME/bin
-#RUN curl -sL --retry 3 --insecure \
-#  --header "Cookie: oraclelicense=accept-securebackup-cookie;" \
-#  "http://download.oracle.com/otn-pub/java/jdk/${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}-b${JAVA_BUILD_NUMBER}/d54c1d3a095b4ff2b6607d096fa80163/server-jre-${JAVA_MAJOR_VERSION}u${JAVA_UPDATE_VERSION}-linux-x64.tar.gz" \
-#  | gunzip \
-#  | tar x -C /usr/ \
-#  && ln -s $JAVA_HOME /usr/java \
-#  && rm -rf $JAVA_HOME/man
-####################
-# HADOOP
-####################
 ENV HADOOP_VERSION 2.9.2
-ENV HADOOP_HOME /usr/hadoop-${HADOOP_VERSION}
+ENV HADOOP_HOME /opt/hadoop
 ENV HADOOP_CONF_DIR ${HADOOP_HOME}/etc/hadoop
 ENV PATH ${HADOOP_HOME}/bin:${PATH}
 ENV HADOOP_CMD ${HADOOP_HOME}/bin/hadoop
 ENV HADOOP_BIN ${HADOOP_HOME}/bin
-RUN curl -sL --retry 3 \
-"http://archive.apache.org/dist/hadoop/common/hadoop-${HADOOP_VERSION}/hadoop-${HADOOP_VERSION}.tar.gz" \
-  | gunzip \
-  | tar -x -C /usr/ \
- && rm -rf $HADOOP_HOME/share/doc \
- && chown -R root:root $HADOOP_HOME
 
-# SPARK
 ENV SPARK_VERSION 2.4.4
 ENV SPARK_PACKAGE spark-${SPARK_VERSION}-bin-without-hadoop
-ENV SPARK_HOME /usr/spark-${SPARK_VERSION}
+ENV SPARK_HOME /opt/spark
 ENV SPARK_DIST_CLASSPATH "${HADOOP_HOME}/etc/hadoop/*:${HADOOP_HOME}/share/hadoop/common/lib/*:${HADOOP_HOME}/share/hadoop/common/*:${HADOOP_HOME}/share/hadoop/hdfs/*:${HADOOP_HOME}/share/hadoop/hdfs/lib/*:${HADOOP_HOME}/share/hadoop/hdfs/*:${HADOOP_HOME}/share/hadoop/yarn/lib/*:${HADOOP_HOME}/share/hadoop/yarn/*:${HADOOP_HOME}/share/hadoop/mapreduce/lib/*:${HADOOP_HOME}/share/hadoop/mapreduce/*:${HADOOP_HOME}/share/hadoop/tools/lib/*"
 ENV PATH ${SPARK_HOME}/bin:${PATH}
-RUN curl -sL --retry 3 \
-  "http://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/${SPARK_PACKAGE}.tgz" \
-  | gunzip \
-  | tar x -C /usr/ \
- && mv /usr/$SPARK_PACKAGE $SPARK_HOME \
- && chown -R root:root $SPARK_HOME \
- && mkdir /opt/spark-data \
- && chown -R root:root /opt/spark-data
-## Use Debian unstable via pinning -- new style via APT::Default-Release
-#RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
-#    && echo 'APT::Default-Release "testing";' > /etc/apt/apt.conf.d/default
 ENV R_BASE_VERSION 3.6.3
 ARG DEBIAN_FRONTEND=noninteractive
-RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
+
+COPY postgresKey.asc openjdkKey.asc /tmp/
+ADD postgresql-42.2.2.jar /opt
+
+# Install Python 3
+RUN apt-get update && \
+    apt-get install -y unzip python3 python3-setuptools python3-software-properties python3-pip \
+                        apt-utils apt-transport-https tzdata ca-certificates \
+                        dirmngr gnupg wget curl software-properties-common && \
+    ln -s /usr/bin/python3 /usr/bin/python && \
+    python -m pip install py4j && \
+# JAVA
+	apt-key add /tmp/postgresKey.asc && \
+	add-apt-repository --yes 'deb http://apt.postgresql.org/pub/repos/apt/ bionic-pgdg main' && \
+	wget -qO - https://adoptopenjdk.jfrog.io/adoptopenjdk/api/gpg/key/public | apt-key add - && \
+	add-apt-repository --yes https://adoptopenjdk.jfrog.io/adoptopenjdk/deb/ && \
+    gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
     gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 | apt-key add - && \
     add-apt-repository -s 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/' && \
-## Now install R and littler, and create a link for littler in /usr/local/bin
-## Also set a default CRAN repo, and make sure littler knows about it too
-    apt-get update && \
+	apt-get update && \
+	apt-get install -y adoptopenjdk-8-hotspot python3-software-properties postgresql-${pgversion} postgresql-client-${pgversion} postgresql-contrib-${pgversion} libpq-dev && \
+	update-java-alternatives -s /usr/lib/jvm/adoptopenjdk-8-hotspot-amd64 && \
+####################
+# HADOOP
+####################
+    cd /opt && \
+    wget --quiet http://archive.apache.org/dist/hadoop/common/hadoop-${hadoopversion}/hadoop-${hadoopversion}.tar.gz && \
+    tar zxf hadoop-${hadoopversion}.tar.gz && \
+    ln -s hadoop-${hadoopversion} hadoop && \
+    rm hadoop-${hadoopversion}.tar.gz && \
+    rm -rf $HADOOP_HOME/share/doc && \
+    chown -R root:root $HADOOP_HOME && \
+# SPARK
+    wget --quiet http://archive.apache.org/dist/spark/spark-${SPARK_VERSION}/&& \
+    tar zxf ${SPARK_PACKAGE}.tgz && \
+    ln -s ${SPARK_PACKAGE} spark && \
+	cp spark/conf/spark-env.sh.template spark/conf/spark-env.sh && \
+	echo "export SPARK_DIST_CLASSPATH=/opt/postgresql-42.2.2.jar:$(/opt/hadoop/bin/hadoop classpath)" >> spark/conf/spark-env.sh && \
+    rm ${SPARK_PACKAGE}.tgz && \
+    mkdir /opt/spark-data && \
+    chown -R root:root /opt/spark-data && \
+    chown -R root:root $SPARK_HOME && \
+# R
+    cd / && \
 ###     apt-get install -y --no-install-recommends littler r-cran-littler r-base-${R_BASE_VERSION} r-base-dev-${R_BASE_VERSION} r-recommended=${R_BASE_VERSION} && \
     apt-get install -y --no-install-recommends littler r-cran-littler r-base r-base-dev r-recommended && \
     echo 'options(repos = c(CRAN = "https://cran.rstudio.com/"), download.file.method = "libcurl")' >> /etc/R/Rprofile.site && \
@@ -108,6 +87,7 @@ RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+VOLUME ["/opt/spark-data"]
 WORKDIR $SPARK_HOME
 CMD ["bin/spark-class", "org.apache.spark.deploy.master.Master"]
 
@@ -116,5 +96,32 @@ EXPOSE 8080
 EXPOSE 8081
 EXPOSE 4040
 
+#
+#RUN apt-get update && \
+#    apt-get install -y locales && \
+#    dpkg-reconfigure -f noninteractive locales && \
+#    locale-gen en_US.UTF-8 && \
+#    /usr/sbin/update-locale LANG=en_US.UTF-8 && \
+#    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+#    locale-gen && \
+#    apt-get clean && \
+#    rm -rf /var/lib/apt/lists/*
+# Users with other locales should set this in their derivative image
+## HIVE ##
+#    cd /opt && \
+#	wget --quiet http://archive.apache.org/dist/hive/hive-${hiveversion}/apache-hive-${hiveversion}-bin.tar.gz && \
+#	tar zxf apache-hive-${hiveversion}-bin.tar.gz && \
+#	ln -s apache-hive-${hiveversion}-bin hive && \
+#	ln -s /usr/share/java/postgresql-jdbc4.jar /opt/hive/lib/postgresql-jdbc4.jar && \
+#	ln -s /opt/hive/jdbc/hive-jdbc-${hiveversion}-standalone.jar /opt/hive/lib/ && \
+#	rm apache-hive-${hiveversion}-bin.tar.gz && \
 
 
+
+## Use Debian unstable via pinning -- new style via APT::Default-Release
+#RUN echo "deb http://http.debian.net/debian sid main" > /etc/apt/sources.list.d/debian-unstable.list \
+#    && echo 'APT::Default-Release "testing";' > /etc/apt/apt.conf.d/default
+
+
+## Now install R and littler, and create a link for littler in /usr/local/bin
+## Also set a default CRAN repo, and make sure littler knows about it too
