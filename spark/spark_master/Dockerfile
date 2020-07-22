@@ -3,7 +3,7 @@ MAINTAINER Jim Harner <ejharner@gmail.com>
 
 ARG hadoopversion=2.9.2
 ARG hiveversion=2.1.1
-ARG sparkversion=2.4.4
+ARG sparkversion=2.4.6
 ARG javaversion=8
 ARG javaversion_number=1.${javaversion}.0
 ARG DEBIAN_FRONTEND=noninteractive
@@ -73,7 +73,7 @@ RUN apt-get update && \
     chown -R root:root /opt/spark-data && \
     chmod 700 /opt/spark-data && \
     chown -R root:root $SPARK_HOME && \
-    chmod 700 ${SPARK_HOME}
+    chmod 700 ${SPARK_HOME} && \
 # R
     cd / && \
 ###     apt-get install -y --no-install-recommends littler r-cran-littler r-base-${R_BASE_VERSION} r-base-dev-${R_BASE_VERSION} r-recommended=${R_BASE_VERSION} && \
